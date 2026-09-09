@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageContent from "../components/PageContent";
+import client from "../../tina/__generated__/client";
+
+const result = await client.queries.page({ relativePath: "contact.mdx" });
+---
+
+<Layout title={result.data.page.title} metaDescription={result.data.page.metaDescription ?? undefined}>
+  <PageContent
+    client:only="react"
+    query={result.query}
+    variables={result.variables}
+    data={result.data}
+  />
+</Layout>

@@ -1,0 +1,9 @@
+services:
+  claude:
+    image: sigmapix/claude-code:2.1.44
+    profiles: [ claude-code ]
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+      - ./docker/.claude:/home/node/.claude
+      - /var/run/docker.sock:/var/run/docker.sock

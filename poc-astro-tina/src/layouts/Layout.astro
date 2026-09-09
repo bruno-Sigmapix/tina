@@ -1,0 +1,82 @@
+---
+interface Props {
+  title: string;
+  metaDescription?: string;
+}
+
+const { title, metaDescription } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {metaDescription && <meta name="description" content={metaDescription} />}
+    <title>{title}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: #1e293b;
+        background: #f8fafc;
+      }
+      nav {
+        background: #1e293b;
+        padding: 1rem 2rem;
+        display: flex;
+        gap: 1.5rem;
+      }
+      nav a {
+        color: #e2e8f0;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      nav a:hover {
+        color: #38bdf8;
+      }
+      main {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+      main img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+      main h2 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      main h3 {
+        margin-top: 1.2rem;
+        margin-bottom: 0.4rem;
+      }
+      main p {
+        margin-bottom: 0.8rem;
+      }
+      main ul, main ol {
+        margin-bottom: 0.8rem;
+        padding-left: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href={`${base}`}>Accueil</a>
+      <a href={`${base}about`}>A propos</a>
+      <a href={`${base}contact`}>Contact</a>
+    </nav>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
