@@ -1,2 +1,14 @@
-/docker/.claude/
+# build output
+dist/
+
+# generated types
+.astro/
+
+# TinaCMS generated
+tina/__generated__/
+
+# jetbrains setting folder
 .idea/
+
+# docker dev environment
+/docker/.claude/
