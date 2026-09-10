@@ -1,4 +1,5 @@
 import { defineConfig } from "tinacms";
+import translations from "./translations";
 
 const branch = process.env.GITHUB_BRANCH || process.env.HEAD || "main";
 
@@ -9,8 +10,8 @@ export default defineConfig({
   token: process.env.TINA_TOKEN || null,
 
   cmsCallback: (cms) => {
-    // Hide the "Cloud" section (title + links) from the sidebar
-    const hideCloudSection = () => {
+    const translateDOM = () => {
+      // Hide the "Cloud" section
       document.querySelectorAll("h4").forEach((h4) => {
         if (h4.textContent?.trim() === "Cloud") {
           h4.style.display = "none";
@@ -20,8 +21,29 @@ export default defineConfig({
           }
         }
       });
+
+      // Translate text nodes
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+      );
+      let node: Text | null;
+      while ((node = walker.nextNode() as Text | null)) {
+        const trimmed = node.textContent?.trim();
+        if (trimmed && translations[trimmed]) {
+          node.textContent = node.textContent!.replace(trimmed, translations[trimmed]);
+        }
+      }
     };
-    const observer = new MutationObserver(hideCloudSection);
+
+    // Disconnect during mutations to avoid infinite loops
+    const observer = new MutationObserver(() => {
+      observer.disconnect();
+      translateDOM();
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+
+    translateDOM();
     observer.observe(document.body, { childList: true, subtree: true });
 
     return cms;
@@ -93,7 +115,7 @@ export default defineConfig({
               }),
             },
             fields: [
-              { type: "number", name: "number", label: "Numero" },
+              { type: "number", name: "number", label: "Numéro" },
               {
                 type: "string",
                 name: "title",
@@ -109,7 +131,7 @@ export default defineConfig({
               {
                 type: "rich-text",
                 name: "details",
-                label: "Details des tarifs",
+                label: "Détails des tarifs",
               },
             ],
           },
