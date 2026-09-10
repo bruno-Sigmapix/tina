@@ -8,6 +8,31 @@ export default defineConfig({
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || null,
   token: process.env.TINA_TOKEN || null,
 
+  cmsCallback: (cms) => {
+    // Remove Cloud sidebar screen plugins
+    const hiddenScreens = ["Project Config", "User Management", "Support"];
+    const screenType = cms.plugins.getType("screen");
+    const removeHidden = () => {
+      screenType.all().forEach((screen: { name: string }) => {
+        if (hiddenScreens.includes(screen.name)) {
+          cms.plugins.remove(screen);
+        }
+      });
+    };
+    removeHidden();
+    screenType.subscribe(removeHidden);
+
+    // Hide the "Cloud" section title via CSS
+    const style = document.createElement("style");
+    style.textContent = `
+      nav h4 { display: none !important; }
+      nav h4 + ul { display: none !important; }
+    `;
+    document.head.appendChild(style);
+
+    return cms;
+  },
+
   build: {
     outputFolder: "admin",
     publicFolder: "public",
