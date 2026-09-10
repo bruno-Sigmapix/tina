@@ -13,5 +13,5 @@ dist/
 # Node
 /node_modules/
 
-# Tina
-/tina/__generated__/
+# Tina (keep __generated__ committed — TinaCloud needs it for indexing)
+/tina/__generated__/.cache/
