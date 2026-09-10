@@ -1,4 +1,6 @@
 ---
+import "../styles/global.css";
+
 interface Props {
   title: string;
   metaDescription?: string;
@@ -6,77 +8,68 @@ interface Props {
 
 const { title, metaDescription } = Astro.props;
 const base = import.meta.env.BASE_URL;
+
+const navLinks = [
+  { label: "Accueil", href: `${base}` },
+  { label: "A propos", href: `${base}about` },
+  { label: "Contact", href: `${base}contact` },
+];
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {metaDescription && <meta name="description" content={metaDescription} />}
-    <title>{title}</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: system-ui, -apple-system, sans-serif;
-        line-height: 1.6;
-        color: #1e293b;
-        background: #f8fafc;
-      }
-      nav {
-        background: #1e293b;
-        padding: 1rem 2rem;
-        display: flex;
-        gap: 1.5rem;
-      }
-      nav a {
-        color: #e2e8f0;
-        text-decoration: none;
-        font-weight: 500;
-      }
-      nav a:hover {
-        color: #38bdf8;
-      }
-      main {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-      }
-      main img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 1rem 0;
-      }
-      main h2 {
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
-      }
-      main h3 {
-        margin-top: 1.2rem;
-        margin-bottom: 0.4rem;
-      }
-      main p {
-        margin-bottom: 0.8rem;
-      }
-      main ul, main ol {
-        margin-bottom: 0.8rem;
-        padding-left: 1.5rem;
-      }
-    </style>
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{title} | POC Astro + Tina</title>
   </head>
-  <body>
-    <nav>
-      <a href={`${base}`}>Accueil</a>
-      <a href={`${base}about`}>A propos</a>
-      <a href={`${base}contact`}>Contact</a>
-    </nav>
-    <main>
+  <body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-md">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+        <a href={`${base}`} class="text-xl font-bold tracking-tight text-slate-900">
+          <span class="text-blue-600">Tina</span>POC
+        </a>
+        <nav class="flex items-center gap-1">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-blue-600"
+            >
+              {link.label}
+            </a>
+          ))}
+          <a
+            href={`${base}admin/`}
+            class="ml-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            Admin
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
       <slot />
     </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-slate-900 text-slate-400">
+      <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div class="text-sm">
+            &copy; {new Date().getFullYear()} <span class="font-semibold text-white">TinaPOC</span> &mdash; Proof of concept Astro + TinaCMS
+          </div>
+          <nav class="flex gap-4 text-sm">
+            {navLinks.map((link) => (
+              <a href={link.href} class="transition hover:text-white">{link.label}</a>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
