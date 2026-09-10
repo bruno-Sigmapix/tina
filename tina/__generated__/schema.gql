@@ -54,12 +54,12 @@ type Query {
   collections: [Collection!]!
   node(id: String): Node!
   document(collection: String, relativePath: String): DocumentNode!
-  page(relativePath: String): Page!
-  pageConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PageFilter): PageConnection!
+  post(relativePath: String): Post!
+  postConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PostFilter): PostConnection!
 }
 
 input DocumentFilter {
-  page: PageFilter
+  post: PostFilter
 }
 
 type DocumentConnectionEdges {
@@ -85,13 +85,24 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Page | Folder
+union DocumentNode = Post | Folder
 
-type Page implements Node & Document {
+type PostCtaPrimary {
+  label: String
+  href: String
+}
+
+type PostCtaSecondary {
+  label: String
+  href: String
+}
+
+type Post implements Node & Document {
+  eyebrow: String
   title: String!
-  image: String
-  metaDescription: String
   body: JSON
+  ctaPrimary: PostCtaPrimary
+  ctaSecondary: PostCtaSecondary
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -104,35 +115,39 @@ input StringFilter {
   in: [String]
 }
 
-input ImageFilter {
-  startsWith: String
-  eq: String
-  exists: Boolean
-  in: [String]
-}
-
 input RichTextFilter {
   startsWith: String
   eq: String
   exists: Boolean
 }
 
-input PageFilter {
+input PostCtaPrimaryFilter {
+  label: StringFilter
+  href: StringFilter
+}
+
+input PostCtaSecondaryFilter {
+  label: StringFilter
+  href: StringFilter
+}
+
+input PostFilter {
+  eyebrow: StringFilter
   title: StringFilter
-  image: ImageFilter
-  metaDescription: StringFilter
   body: RichTextFilter
+  ctaPrimary: PostCtaPrimaryFilter
+  ctaSecondary: PostCtaSecondaryFilter
 }
 
-type PageConnectionEdges {
+type PostConnectionEdges {
   cursor: String!
-  node: Page
+  node: Post
 }
 
-type PageConnection implements Connection {
+type PostConnection implements Connection {
   pageInfo: PageInfo!
   totalCount: Float!
-  edges: [PageConnectionEdges]
+  edges: [PostConnectionEdges]
 }
 
 type Mutation {
@@ -141,24 +156,35 @@ type Mutation {
   deleteDocument(collection: String, relativePath: String!): DocumentNode!
   createDocument(collection: String, relativePath: String!, params: DocumentMutation!): DocumentNode!
   createFolder(collection: String, relativePath: String!): DocumentNode!
-  updatePage(relativePath: String!, params: PageMutation!): Page!
-  createPage(relativePath: String!, params: PageMutation!): Page!
+  updatePost(relativePath: String!, params: PostMutation!): Post!
+  createPost(relativePath: String!, params: PostMutation!): Post!
 }
 
 input DocumentUpdateMutation {
-  page: PageMutation
+  post: PostMutation
   relativePath: String
 }
 
 input DocumentMutation {
-  page: PageMutation
+  post: PostMutation
 }
 
-input PageMutation {
+input PostCtaPrimaryMutation {
+  label: String
+  href: String
+}
+
+input PostCtaSecondaryMutation {
+  label: String
+  href: String
+}
+
+input PostMutation {
+  eyebrow: String
   title: String
-  image: String
-  metaDescription: String
   body: JSON
+  ctaPrimary: PostCtaPrimaryMutation
+  ctaSecondary: PostCtaSecondaryMutation
 }
 
 schema {

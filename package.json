@@ -12,7 +12,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.1.5",
     "@astrojs/react": "^6.0.5",
+    "@tinacms/astro": "^0.7.0",
     "astro": "^7.3.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "@tinacms/cli": "^2.7.0",
+    "@types/node": "^22.20.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7"
   },

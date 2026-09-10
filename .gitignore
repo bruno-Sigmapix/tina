@@ -15,3 +15,5 @@ dist/
 
 # Tina (keep __generated__ committed — TinaCloud needs it for indexing)
 /tina/__generated__/.cache/
+
+.env

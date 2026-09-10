@@ -7,3 +7,10 @@ services:
       - ./:/workspace
       - ./docker/.claude:/home/node/.claude
       - /var/run/docker.sock:/var/run/docker.sock
+  node:
+    image: node:22-alpine
+    profiles: [ node ]
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run build"

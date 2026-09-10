@@ -1,7 +1,16 @@
-fragment PageParts on Page {
+fragment PostParts on Post {
   __typename
+  eyebrow
   title
-  image
-  metaDescription
   body
+  ctaPrimary {
+    __typename
+    label
+    href
+  }
+  ctaSecondary {
+    __typename
+    label
+    href
+  }
 }

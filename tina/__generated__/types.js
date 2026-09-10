@@ -5,18 +5,27 @@ export function gql(strings, ...args) {
   });
   return str;
 }
-export const PagePartsFragmentDoc = gql`
-    fragment PageParts on Page {
+export const PostPartsFragmentDoc = gql`
+    fragment PostParts on Post {
   __typename
+  eyebrow
   title
-  image
-  metaDescription
   body
+  ctaPrimary {
+    __typename
+    label
+    href
+  }
+  ctaSecondary {
+    __typename
+    label
+    href
+  }
 }
     `;
-export const PageDocument = gql`
-    query page($relativePath: String!) {
-  page(relativePath: $relativePath) {
+export const PostDocument = gql`
+    query post($relativePath: String!) {
+  post(relativePath: $relativePath) {
     ... on Document {
       _sys {
         filename
@@ -29,13 +38,13 @@ export const PageDocument = gql`
       }
       id
     }
-    ...PageParts
+    ...PostParts
   }
 }
-    ${PagePartsFragmentDoc}`;
-export const PageConnectionDocument = gql`
-    query pageConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PageFilter) {
-  pageConnection(
+    ${PostPartsFragmentDoc}`;
+export const PostConnectionDocument = gql`
+    query postConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PostFilter) {
+  postConnection(
     before: $before
     after: $after
     first: $first
@@ -65,19 +74,19 @@ export const PageConnectionDocument = gql`
           }
           id
         }
-        ...PageParts
+        ...PostParts
       }
     }
   }
 }
-    ${PagePartsFragmentDoc}`;
+    ${PostPartsFragmentDoc}`;
 export function getSdk(requester) {
   return {
-    page(variables, options) {
-      return requester(PageDocument, variables, options);
+    post(variables, options) {
+      return requester(PostDocument, variables, options);
     },
-    pageConnection(variables, options) {
-      return requester(PageConnectionDocument, variables, options);
+    postConnection(variables, options) {
+      return requester(PostConnectionDocument, variables, options);
     }
   };
 }
