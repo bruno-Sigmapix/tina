@@ -4,6 +4,7 @@ import PageContent from "../components/PageContent";
 import client from "../../tina/__generated__/client";
 
 const result = await client.queries.page({ relativePath: "contact.mdx" });
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title={result.data.page.title} metaDescription={result.data.page.metaDescription ?? undefined}>
@@ -13,4 +14,61 @@ const result = await client.queries.page({ relativePath: "contact.mdx" });
     variables={result.variables}
     data={result.data}
   />
+
+  <section class="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <h2 class="mb-6 text-2xl font-bold text-slate-900">Envoyer un message</h2>
+    <form
+      action="https://formsubmit.co/0f88807fbb7f86e801623bf5efe847ba"
+      method="POST"
+      class="grid gap-5 sm:grid-cols-2"
+    >
+      <!-- FormSubmit config -->
+      <input type="hidden" name="_subject" value="Nouveau message depuis TinaPOC" />
+      <input type="hidden" name="_next" value={`${base}contact?sent=1`} />
+      <input type="hidden" name="_captcha" value="true" />
+      <input type="text" name="_honey" class="hidden" />
+
+      <div class="flex flex-col gap-1.5">
+        <label for="name" class="text-sm font-medium text-slate-700">Nom</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          class="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="email" class="text-sm font-medium text-slate-700">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          class="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5 sm:col-span-2">
+        <label for="message" class="text-sm font-medium text-slate-700">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="5"
+          required
+          class="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        ></textarea>
+      </div>
+
+      <div class="sm:col-span-2">
+        <button
+          type="submit"
+          class="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+        >
+          Envoyer
+        </button>
+      </div>
+    </form>
+  </section>
 </Layout>
