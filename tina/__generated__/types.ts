@@ -81,8 +81,8 @@ export type Query = {
   collections: Array<Collection>;
   node: Node;
   document: DocumentNode;
-  post: Post;
-  postConnection: PostConnection;
+  page: Page;
+  pageConnection: PageConnection;
 };
 
 
@@ -107,22 +107,22 @@ export type QueryDocumentArgs = {
 };
 
 
-export type QueryPostArgs = {
+export type QueryPageArgs = {
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-export type QueryPostConnectionArgs = {
+export type QueryPageConnectionArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Float']['input']>;
   last?: InputMaybe<Scalars['Float']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<PostFilter>;
+  filter?: InputMaybe<PageFilter>;
 };
 
 export type DocumentFilter = {
-  post?: InputMaybe<PostFilter>;
+  page?: InputMaybe<PageFilter>;
 };
 
 export type DocumentConnectionEdges = {
@@ -162,27 +162,14 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Post | Folder;
+export type DocumentNode = Page | Folder;
 
-export type PostCtaPrimary = {
-  __typename?: 'PostCtaPrimary';
-  label?: Maybe<Scalars['String']['output']>;
-  href?: Maybe<Scalars['String']['output']>;
-};
-
-export type PostCtaSecondary = {
-  __typename?: 'PostCtaSecondary';
-  label?: Maybe<Scalars['String']['output']>;
-  href?: Maybe<Scalars['String']['output']>;
-};
-
-export type Post = Node & Document & {
-  __typename?: 'Post';
-  eyebrow?: Maybe<Scalars['String']['output']>;
+export type Page = Node & Document & {
+  __typename?: 'Page';
   title: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  metaDescription?: Maybe<Scalars['String']['output']>;
   body?: Maybe<Scalars['JSON']['output']>;
-  ctaPrimary?: Maybe<PostCtaPrimary>;
-  ctaSecondary?: Maybe<PostCtaSecondary>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -195,41 +182,37 @@ export type StringFilter = {
   in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type ImageFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
+  eq?: InputMaybe<Scalars['String']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
 export type RichTextFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
   eq?: InputMaybe<Scalars['String']['input']>;
   exists?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type PostCtaPrimaryFilter = {
-  label?: InputMaybe<StringFilter>;
-  href?: InputMaybe<StringFilter>;
-};
-
-export type PostCtaSecondaryFilter = {
-  label?: InputMaybe<StringFilter>;
-  href?: InputMaybe<StringFilter>;
-};
-
-export type PostFilter = {
-  eyebrow?: InputMaybe<StringFilter>;
+export type PageFilter = {
   title?: InputMaybe<StringFilter>;
+  image?: InputMaybe<ImageFilter>;
+  metaDescription?: InputMaybe<StringFilter>;
   body?: InputMaybe<RichTextFilter>;
-  ctaPrimary?: InputMaybe<PostCtaPrimaryFilter>;
-  ctaSecondary?: InputMaybe<PostCtaSecondaryFilter>;
 };
 
-export type PostConnectionEdges = {
-  __typename?: 'PostConnectionEdges';
+export type PageConnectionEdges = {
+  __typename?: 'PageConnectionEdges';
   cursor: Scalars['String']['output'];
-  node?: Maybe<Post>;
+  node?: Maybe<Page>;
 };
 
-export type PostConnection = Connection & {
-  __typename?: 'PostConnection';
+export type PageConnection = Connection & {
+  __typename?: 'PageConnection';
   pageInfo: PageInfo;
   totalCount: Scalars['Float']['output'];
-  edges?: Maybe<Array<Maybe<PostConnectionEdges>>>;
+  edges?: Maybe<Array<Maybe<PageConnectionEdges>>>;
 };
 
 export type Mutation = {
@@ -239,8 +222,8 @@ export type Mutation = {
   deleteDocument: DocumentNode;
   createDocument: DocumentNode;
   createFolder: DocumentNode;
-  updatePost: Post;
-  createPost: Post;
+  updatePage: Page;
+  createPage: Page;
 };
 
 
@@ -277,45 +260,41 @@ export type MutationCreateFolderArgs = {
 };
 
 
-export type MutationUpdatePostArgs = {
+export type MutationUpdatePageArgs = {
   relativePath: Scalars['String']['input'];
-  params: PostMutation;
+  params: PageMutation;
 };
 
 
-export type MutationCreatePostArgs = {
+export type MutationCreatePageArgs = {
   relativePath: Scalars['String']['input'];
-  params: PostMutation;
+  params: PageMutation;
 };
 
 export type DocumentUpdateMutation = {
-  post?: InputMaybe<PostMutation>;
+  page?: InputMaybe<PageMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DocumentMutation = {
-  post?: InputMaybe<PostMutation>;
+  page?: InputMaybe<PageMutation>;
 };
 
-export type PostCtaPrimaryMutation = {
-  label?: InputMaybe<Scalars['String']['input']>;
-  href?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type PostCtaSecondaryMutation = {
-  label?: InputMaybe<Scalars['String']['input']>;
-  href?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type PostMutation = {
-  eyebrow?: InputMaybe<Scalars['String']['input']>;
+export type PageMutation = {
   title?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  metaDescription?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
-  ctaPrimary?: InputMaybe<PostCtaPrimaryMutation>;
-  ctaSecondary?: InputMaybe<PostCtaSecondaryMutation>;
 };
 
 export type StringFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
+
+export type ImageFilter = {
   startsWith?: string | null | undefined;
   eq?: string | null | undefined;
   exists?: boolean | null | undefined;
@@ -328,66 +307,46 @@ export type RichTextFilter = {
   exists?: boolean | null | undefined;
 };
 
-export type PostCtaPrimaryFilter = {
-  label?: StringFilter | null | undefined;
-  href?: StringFilter | null | undefined;
-};
-
-export type PostCtaSecondaryFilter = {
-  label?: StringFilter | null | undefined;
-  href?: StringFilter | null | undefined;
-};
-
-export type PostFilter = {
-  eyebrow?: StringFilter | null | undefined;
+export type PageFilter = {
   title?: StringFilter | null | undefined;
+  image?: ImageFilter | null | undefined;
+  metaDescription?: StringFilter | null | undefined;
   body?: RichTextFilter | null | undefined;
-  ctaPrimary?: PostCtaPrimaryFilter | null | undefined;
-  ctaSecondary?: PostCtaSecondaryFilter | null | undefined;
 };
 
-export type PostPartsFragment = { __typename: 'Post', eyebrow: string | null, title: string, body: any, ctaPrimary: { __typename: 'PostCtaPrimary', label: string | null, href: string | null } | null, ctaSecondary: { __typename: 'PostCtaSecondary', label: string | null, href: string | null } | null };
+export type PagePartsFragment = { __typename: 'Page', title: string, image: string | null, metaDescription: string | null, body: any };
 
-export type PostQueryVariables = Exact<{
+export type PageQueryVariables = Exact<{
   relativePath: string;
 }>;
 
 
-export type PostQuery = { post: { __typename: 'Post', id: string, eyebrow: string | null, title: string, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, ctaPrimary: { __typename: 'PostCtaPrimary', label: string | null, href: string | null } | null, ctaSecondary: { __typename: 'PostCtaSecondary', label: string | null, href: string | null } | null } };
+export type PageQuery = { page: { __typename: 'Page', id: string, title: string, image: string | null, metaDescription: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
-export type PostConnectionQueryVariables = Exact<{
+export type PageConnectionQueryVariables = Exact<{
   before?: string | null | undefined;
   after?: string | null | undefined;
   first?: number | null | undefined;
   last?: number | null | undefined;
   sort?: string | null | undefined;
-  filter?: PostFilter | null | undefined;
+  filter?: PageFilter | null | undefined;
 }>;
 
 
-export type PostConnectionQuery = { postConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Post', id: string, eyebrow: string | null, title: string, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, ctaPrimary: { __typename: 'PostCtaPrimary', label: string | null, href: string | null } | null, ctaSecondary: { __typename: 'PostCtaSecondary', label: string | null, href: string | null } | null } | null } | null> | null } };
+export type PageConnectionQuery = { pageConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Page', id: string, title: string, image: string | null, metaDescription: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
-export const PostPartsFragmentDoc = gql`
-    fragment PostParts on Post {
+export const PagePartsFragmentDoc = gql`
+    fragment PageParts on Page {
   __typename
-  eyebrow
   title
+  image
+  metaDescription
   body
-  ctaPrimary {
-    __typename
-    label
-    href
-  }
-  ctaSecondary {
-    __typename
-    label
-    href
-  }
 }
     `;
-export const PostDocument = gql`
-    query post($relativePath: String!) {
-  post(relativePath: $relativePath) {
+export const PageDocument = gql`
+    query page($relativePath: String!) {
+  page(relativePath: $relativePath) {
     ... on Document {
       _sys {
         filename
@@ -400,13 +359,13 @@ export const PostDocument = gql`
       }
       id
     }
-    ...PostParts
+    ...PageParts
   }
 }
-    ${PostPartsFragmentDoc}`;
-export const PostConnectionDocument = gql`
-    query postConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PostFilter) {
-  postConnection(
+    ${PagePartsFragmentDoc}`;
+export const PageConnectionDocument = gql`
+    query pageConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PageFilter) {
+  pageConnection(
     before: $before
     after: $after
     first: $first
@@ -436,20 +395,20 @@ export const PostConnectionDocument = gql`
           }
           id
         }
-        ...PostParts
+        ...PageParts
       }
     }
   }
 }
-    ${PostPartsFragmentDoc}`;
+    ${PagePartsFragmentDoc}`;
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
-      post(variables: PostQueryVariables, options?: C): Promise<{data: PostQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostQueryVariables, query: string}> {
-        return requester<{data: PostQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostQueryVariables, query: string}, PostQueryVariables>(PostDocument, variables, options);
+      page(variables: PageQueryVariables, options?: C): Promise<{data: PageQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageQueryVariables, query: string}> {
+        return requester<{data: PageQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageQueryVariables, query: string}, PageQueryVariables>(PageDocument, variables, options);
       },
-    postConnection(variables?: PostConnectionQueryVariables, options?: C): Promise<{data: PostConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostConnectionQueryVariables, query: string}> {
-        return requester<{data: PostConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostConnectionQueryVariables, query: string}, PostConnectionQueryVariables>(PostConnectionDocument, variables, options);
+    pageConnection(variables?: PageConnectionQueryVariables, options?: C): Promise<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}> {
+        return requester<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}, PageConnectionQueryVariables>(PageConnectionDocument, variables, options);
       }
     };
   }

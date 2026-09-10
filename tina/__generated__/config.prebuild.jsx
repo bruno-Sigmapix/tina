@@ -1,77 +1,56 @@
 // tina/config.ts
 import { defineConfig } from "tinacms";
-var branch = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || "main";
+var branch = process.env.GITHUB_BRANCH || process.env.HEAD || "main";
 var config_default = defineConfig({
   branch,
-  // Get this from tina.io
-  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-  // Get this from tina.io
-  token: process.env.TINA_TOKEN,
+  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || null,
+  token: process.env.TINA_TOKEN || null,
   build: {
     outputFolder: "admin",
-    publicFolder: "public"
+    publicFolder: "public",
+    basePath: "tina"
   },
-  // Uncomment to allow cross-origin requests from non-localhost origins
-  // during local development (e.g. GitHub Codespaces, Gitpod, Docker).
-  // Use 'private' to allow all private-network IPs (WSL2, Docker, etc.)
-  // server: {
-  //   allowedOrigins: ['https://your-codespace.github.dev'],
-  // },
   media: {
     tina: {
-      mediaRoot: "",
+      mediaRoot: "uploads",
       publicFolder: "public"
     }
   },
-  // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/r/content-modelling-collections/
   schema: {
     collections: [
       {
-        name: "post",
-        label: "Posts",
-        path: "content/posts",
+        name: "page",
+        label: "Pages",
+        path: "content/pages",
+        format: "mdx",
         fields: [
           {
             type: "string",
-            name: "eyebrow",
-            label: "Eyebrow"
-          },
-          {
-            type: "string",
             name: "title",
-            label: "Headline",
+            label: "Titre",
             isTitle: true,
             required: true
           },
           {
+            type: "image",
+            name: "image",
+            label: "Image principale"
+          },
+          {
+            type: "string",
+            name: "metaDescription",
+            label: "Meta Description (SEO)",
+            ui: {
+              component: "textarea"
+            }
+          },
+          {
             type: "rich-text",
             name: "body",
-            label: "Tagline",
+            label: "Contenu",
             isBody: true
-          },
-          {
-            type: "object",
-            name: "ctaPrimary",
-            label: "Primary button",
-            fields: [
-              { type: "string", name: "label", label: "Label" },
-              { type: "string", name: "href", label: "Link" }
-            ]
-          },
-          {
-            type: "object",
-            name: "ctaSecondary",
-            label: "Secondary button",
-            fields: [
-              { type: "string", name: "label", label: "Label" },
-              { type: "string", name: "href", label: "Link" }
-            ]
           }
-        ],
-        ui: {
-          // Opens the /tinacms-demo page for visual editing. Change or remove to fit your site.
-          router: () => "/tinacms-demo"
-        }
+        ]
       }
     ]
   }
