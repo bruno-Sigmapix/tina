@@ -51,6 +51,51 @@ var config_default = defineConfig({
             isBody: true
           }
         ]
+      },
+      {
+        name: "pricing",
+        label: "Tarifs",
+        path: "content/pricing",
+        format: "json",
+        fields: [
+          {
+            type: "object",
+            name: "tiers",
+            label: "Formules",
+            list: true,
+            ui: {
+              itemProps: (item) => ({
+                label: item?.title
+              })
+            },
+            fields: [
+              { type: "number", name: "number", label: "Numero" },
+              {
+                type: "string",
+                name: "title",
+                label: "Titre",
+                required: true
+              },
+              {
+                type: "string",
+                name: "highlight",
+                label: "Texte mis en avant",
+                ui: { component: "textarea" }
+              },
+              {
+                type: "rich-text",
+                name: "details",
+                label: "Details des tarifs"
+              }
+            ]
+          },
+          {
+            type: "string",
+            name: "footnote",
+            label: "Note de bas de page",
+            ui: { component: "textarea" }
+          }
+        ]
       }
     ]
   }

@@ -5,3 +5,15 @@ fragment PageParts on Page {
   metaDescription
   body
 }
+
+fragment PricingParts on Pricing {
+  __typename
+  tiers {
+    __typename
+    number
+    title
+    highlight
+    details
+  }
+  footnote
+}

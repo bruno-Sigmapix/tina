@@ -14,6 +14,19 @@ export const PagePartsFragmentDoc = gql`
   body
 }
     `;
+export const PricingPartsFragmentDoc = gql`
+    fragment PricingParts on Pricing {
+  __typename
+  tiers {
+    __typename
+    number
+    title
+    highlight
+    details
+  }
+  footnote
+}
+    `;
 export const PageDocument = gql`
     query page($relativePath: String!) {
   page(relativePath: $relativePath) {
@@ -71,6 +84,63 @@ export const PageConnectionDocument = gql`
   }
 }
     ${PagePartsFragmentDoc}`;
+export const PricingDocument = gql`
+    query pricing($relativePath: String!) {
+  pricing(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...PricingParts
+  }
+}
+    ${PricingPartsFragmentDoc}`;
+export const PricingConnectionDocument = gql`
+    query pricingConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PricingFilter) {
+  pricingConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...PricingParts
+      }
+    }
+  }
+}
+    ${PricingPartsFragmentDoc}`;
 export function getSdk(requester) {
   return {
     page(variables, options) {
@@ -78,6 +148,12 @@ export function getSdk(requester) {
     },
     pageConnection(variables, options) {
       return requester(PageConnectionDocument, variables, options);
+    },
+    pricing(variables, options) {
+      return requester(PricingDocument, variables, options);
+    },
+    pricingConnection(variables, options) {
+      return requester(PricingConnectionDocument, variables, options);
     }
   };
 }

@@ -1,0 +1,20 @@
+{
+  "tiers": [
+    {
+      "number": 1,
+      "title": "Formule A",
+      "highlight": "Description de la formule A. Modifiable depuis l'interface Tina."
+    },
+    {
+      "number": 2,
+      "title": "Formule B",
+      "highlight": "Description de la formule B. Modifiable depuis l'interface Tina."
+    },
+    {
+      "number": 3,
+      "title": "Formule C",
+      "highlight": "Description de la formule C. Modifiable depuis l'interface Tina."
+    }
+  ],
+  "footnote": "Les tarifs sont donnes a titre indicatif. Contactez-nous pour un devis personnalise."
+}

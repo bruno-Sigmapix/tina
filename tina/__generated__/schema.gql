@@ -56,10 +56,13 @@ type Query {
   document(collection: String, relativePath: String): DocumentNode!
   page(relativePath: String): Page!
   pageConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PageFilter): PageConnection!
+  pricing(relativePath: String): Pricing!
+  pricingConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PricingFilter): PricingConnection!
 }
 
 input DocumentFilter {
   page: PageFilter
+  pricing: PricingFilter
 }
 
 type DocumentConnectionEdges {
@@ -85,7 +88,7 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Page | Folder
+union DocumentNode = Page | Pricing | Folder
 
 type Page implements Node & Document {
   title: String!
@@ -135,6 +138,54 @@ type PageConnection implements Connection {
   edges: [PageConnectionEdges]
 }
 
+type PricingTiers {
+  number: Float
+  title: String!
+  highlight: String
+  details: JSON
+}
+
+type Pricing implements Node & Document {
+  tiers: [PricingTiers]
+  footnote: String
+  id: ID!
+  _sys: SystemInfo!
+  _values: JSON!
+}
+
+input NumberFilter {
+  lt: Float
+  lte: Float
+  gte: Float
+  gt: Float
+  eq: Float
+  exists: Boolean
+  in: [Float]
+}
+
+input PricingTiersFilter {
+  number: NumberFilter
+  title: StringFilter
+  highlight: StringFilter
+  details: RichTextFilter
+}
+
+input PricingFilter {
+  tiers: PricingTiersFilter
+  footnote: StringFilter
+}
+
+type PricingConnectionEdges {
+  cursor: String!
+  node: Pricing
+}
+
+type PricingConnection implements Connection {
+  pageInfo: PageInfo!
+  totalCount: Float!
+  edges: [PricingConnectionEdges]
+}
+
 type Mutation {
   addPendingDocument(collection: String!, relativePath: String!, template: String): DocumentNode!
   updateDocument(collection: String, relativePath: String!, params: DocumentUpdateMutation!): DocumentNode!
@@ -143,15 +194,19 @@ type Mutation {
   createFolder(collection: String, relativePath: String!): DocumentNode!
   updatePage(relativePath: String!, params: PageMutation!): Page!
   createPage(relativePath: String!, params: PageMutation!): Page!
+  updatePricing(relativePath: String!, params: PricingMutation!): Pricing!
+  createPricing(relativePath: String!, params: PricingMutation!): Pricing!
 }
 
 input DocumentUpdateMutation {
   page: PageMutation
+  pricing: PricingMutation
   relativePath: String
 }
 
 input DocumentMutation {
   page: PageMutation
+  pricing: PricingMutation
 }
 
 input PageMutation {
@@ -159,6 +214,18 @@ input PageMutation {
   image: String
   metaDescription: String
   body: JSON
+}
+
+input PricingTiersMutation {
+  number: Float
+  title: String
+  highlight: String
+  details: JSON
+}
+
+input PricingMutation {
+  tiers: [PricingTiersMutation]
+  footnote: String
 }
 
 schema {

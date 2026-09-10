@@ -83,6 +83,8 @@ export type Query = {
   document: DocumentNode;
   page: Page;
   pageConnection: PageConnection;
+  pricing: Pricing;
+  pricingConnection: PricingConnection;
 };
 
 
@@ -121,8 +123,24 @@ export type QueryPageConnectionArgs = {
   filter?: InputMaybe<PageFilter>;
 };
 
+
+export type QueryPricingArgs = {
+  relativePath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPricingConnectionArgs = {
+  before?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Float']['input']>;
+  last?: InputMaybe<Scalars['Float']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<PricingFilter>;
+};
+
 export type DocumentFilter = {
   page?: InputMaybe<PageFilter>;
+  pricing?: InputMaybe<PricingFilter>;
 };
 
 export type DocumentConnectionEdges = {
@@ -162,7 +180,7 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Page | Folder;
+export type DocumentNode = Page | Pricing | Folder;
 
 export type Page = Node & Document & {
   __typename?: 'Page';
@@ -215,6 +233,58 @@ export type PageConnection = Connection & {
   edges?: Maybe<Array<Maybe<PageConnectionEdges>>>;
 };
 
+export type PricingTiers = {
+  __typename?: 'PricingTiers';
+  number?: Maybe<Scalars['Float']['output']>;
+  title: Scalars['String']['output'];
+  highlight?: Maybe<Scalars['String']['output']>;
+  details?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type Pricing = Node & Document & {
+  __typename?: 'Pricing';
+  tiers?: Maybe<Array<Maybe<PricingTiers>>>;
+  footnote?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  _sys: SystemInfo;
+  _values: Scalars['JSON']['output'];
+};
+
+export type NumberFilter = {
+  lt?: InputMaybe<Scalars['Float']['input']>;
+  lte?: InputMaybe<Scalars['Float']['input']>;
+  gte?: InputMaybe<Scalars['Float']['input']>;
+  gt?: InputMaybe<Scalars['Float']['input']>;
+  eq?: InputMaybe<Scalars['Float']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
+};
+
+export type PricingTiersFilter = {
+  number?: InputMaybe<NumberFilter>;
+  title?: InputMaybe<StringFilter>;
+  highlight?: InputMaybe<StringFilter>;
+  details?: InputMaybe<RichTextFilter>;
+};
+
+export type PricingFilter = {
+  tiers?: InputMaybe<PricingTiersFilter>;
+  footnote?: InputMaybe<StringFilter>;
+};
+
+export type PricingConnectionEdges = {
+  __typename?: 'PricingConnectionEdges';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<Pricing>;
+};
+
+export type PricingConnection = Connection & {
+  __typename?: 'PricingConnection';
+  pageInfo: PageInfo;
+  totalCount: Scalars['Float']['output'];
+  edges?: Maybe<Array<Maybe<PricingConnectionEdges>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addPendingDocument: DocumentNode;
@@ -224,6 +294,8 @@ export type Mutation = {
   createFolder: DocumentNode;
   updatePage: Page;
   createPage: Page;
+  updatePricing: Pricing;
+  createPricing: Pricing;
 };
 
 
@@ -271,13 +343,27 @@ export type MutationCreatePageArgs = {
   params: PageMutation;
 };
 
+
+export type MutationUpdatePricingArgs = {
+  relativePath: Scalars['String']['input'];
+  params: PricingMutation;
+};
+
+
+export type MutationCreatePricingArgs = {
+  relativePath: Scalars['String']['input'];
+  params: PricingMutation;
+};
+
 export type DocumentUpdateMutation = {
   page?: InputMaybe<PageMutation>;
+  pricing?: InputMaybe<PricingMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DocumentMutation = {
   page?: InputMaybe<PageMutation>;
+  pricing?: InputMaybe<PricingMutation>;
 };
 
 export type PageMutation = {
@@ -285,6 +371,18 @@ export type PageMutation = {
   image?: InputMaybe<Scalars['String']['input']>;
   metaDescription?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type PricingTiersMutation = {
+  number?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  highlight?: InputMaybe<Scalars['String']['input']>;
+  details?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type PricingMutation = {
+  tiers?: InputMaybe<Array<InputMaybe<PricingTiersMutation>>>;
+  footnote?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type StringFilter = {
@@ -314,7 +412,31 @@ export type PageFilter = {
   body?: RichTextFilter | null | undefined;
 };
 
+export type NumberFilter = {
+  lt?: number | null | undefined;
+  lte?: number | null | undefined;
+  gte?: number | null | undefined;
+  gt?: number | null | undefined;
+  eq?: number | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<number | null | undefined> | null | undefined;
+};
+
+export type PricingTiersFilter = {
+  number?: NumberFilter | null | undefined;
+  title?: StringFilter | null | undefined;
+  highlight?: StringFilter | null | undefined;
+  details?: RichTextFilter | null | undefined;
+};
+
+export type PricingFilter = {
+  tiers?: PricingTiersFilter | null | undefined;
+  footnote?: StringFilter | null | undefined;
+};
+
 export type PagePartsFragment = { __typename: 'Page', title: string, image: string | null, metaDescription: string | null, body: any };
+
+export type PricingPartsFragment = { __typename: 'Pricing', footnote: string | null, tiers: Array<{ __typename: 'PricingTiers', number: number | null, title: string, highlight: string | null, details: any } | null> | null };
 
 export type PageQueryVariables = Exact<{
   relativePath: string;
@@ -335,6 +457,25 @@ export type PageConnectionQueryVariables = Exact<{
 
 export type PageConnectionQuery = { pageConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Page', id: string, title: string, image: string | null, metaDescription: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
+export type PricingQueryVariables = Exact<{
+  relativePath: string;
+}>;
+
+
+export type PricingQuery = { pricing: { __typename: 'Pricing', id: string, footnote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, tiers: Array<{ __typename: 'PricingTiers', number: number | null, title: string, highlight: string | null, details: any } | null> | null } };
+
+export type PricingConnectionQueryVariables = Exact<{
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: PricingFilter | null | undefined;
+}>;
+
+
+export type PricingConnectionQuery = { pricingConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Pricing', id: string, footnote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, tiers: Array<{ __typename: 'PricingTiers', number: number | null, title: string, highlight: string | null, details: any } | null> | null } | null } | null> | null } };
+
 export const PagePartsFragmentDoc = gql`
     fragment PageParts on Page {
   __typename
@@ -342,6 +483,19 @@ export const PagePartsFragmentDoc = gql`
   image
   metaDescription
   body
+}
+    `;
+export const PricingPartsFragmentDoc = gql`
+    fragment PricingParts on Pricing {
+  __typename
+  tiers {
+    __typename
+    number
+    title
+    highlight
+    details
+  }
+  footnote
 }
     `;
 export const PageDocument = gql`
@@ -401,6 +555,63 @@ export const PageConnectionDocument = gql`
   }
 }
     ${PagePartsFragmentDoc}`;
+export const PricingDocument = gql`
+    query pricing($relativePath: String!) {
+  pricing(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...PricingParts
+  }
+}
+    ${PricingPartsFragmentDoc}`;
+export const PricingConnectionDocument = gql`
+    query pricingConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: PricingFilter) {
+  pricingConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...PricingParts
+      }
+    }
+  }
+}
+    ${PricingPartsFragmentDoc}`;
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
@@ -409,6 +620,12 @@ export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) 
       },
     pageConnection(variables?: PageConnectionQueryVariables, options?: C): Promise<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}> {
         return requester<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}, PageConnectionQueryVariables>(PageConnectionDocument, variables, options);
+      },
+    pricing(variables: PricingQueryVariables, options?: C): Promise<{data: PricingQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingQueryVariables, query: string}> {
+        return requester<{data: PricingQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingQueryVariables, query: string}, PricingQueryVariables>(PricingDocument, variables, options);
+      },
+    pricingConnection(variables?: PricingConnectionQueryVariables, options?: C): Promise<{data: PricingConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingConnectionQueryVariables, query: string}> {
+        return requester<{data: PricingConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingConnectionQueryVariables, query: string}, PricingConnectionQueryVariables>(PricingConnectionDocument, variables, options);
       }
     };
   }
