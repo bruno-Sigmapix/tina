@@ -6,23 +6,19 @@ var config_default = defineConfig({
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || null,
   token: process.env.TINA_TOKEN || null,
   cmsCallback: (cms) => {
-    const hiddenScreens = ["Project Config", "User Management", "Support"];
-    const screenType = cms.plugins.getType("screen");
-    const removeHidden = () => {
-      screenType.all().forEach((screen) => {
-        if (hiddenScreens.includes(screen.name)) {
-          cms.plugins.remove(screen);
+    const hideCloudSection = () => {
+      document.querySelectorAll("h4").forEach((h4) => {
+        if (h4.textContent?.trim() === "Cloud") {
+          h4.style.display = "none";
+          const nextUl = h4.nextElementSibling;
+          if (nextUl?.tagName === "UL") {
+            nextUl.style.display = "none";
+          }
         }
       });
     };
-    removeHidden();
-    screenType.subscribe(removeHidden);
-    const style = document.createElement("style");
-    style.textContent = `
-      nav h4 { display: none !important; }
-      nav h4 + ul { display: none !important; }
-    `;
-    document.head.appendChild(style);
+    const observer = new MutationObserver(hideCloudSection);
+    observer.observe(document.body, { childList: true, subtree: true });
     return cms;
   },
   build: {
