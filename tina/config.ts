@@ -71,8 +71,8 @@ export default defineConfig({
         format: "mdx",
         ui: {
           router: ({ document }) => {
-            if (document._sys.filename === "home") return "/";
-            return `/${document._sys.filename}`;
+            if (document._sys.filename === "home") return "/tina/";
+            return `/tina/${document._sys.filename}`;
           },
         },
         fields: [
@@ -110,7 +110,7 @@ export default defineConfig({
         path: "content/pricing",
         format: "json",
         ui: {
-          router: () => "/tarifs",
+          router: () => "/tina/tarifs",
         },
         fields: [
           {

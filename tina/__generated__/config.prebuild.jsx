@@ -102,8 +102,8 @@ var config_default = defineConfig({
         format: "mdx",
         ui: {
           router: ({ document: document2 }) => {
-            if (document2._sys.filename === "home") return "/";
-            return `/${document2._sys.filename}`;
+            if (document2._sys.filename === "home") return "/tina/";
+            return `/tina/${document2._sys.filename}`;
           }
         },
         fields: [
@@ -141,7 +141,7 @@ var config_default = defineConfig({
         path: "content/pricing",
         format: "json",
         ui: {
-          router: () => "/tarifs"
+          router: () => "/tina/tarifs"
         },
         fields: [
           {
