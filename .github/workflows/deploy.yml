@@ -33,7 +33,7 @@ jobs:
         run: echo 'export const deployToken = "${{ secrets.DEPLOY_TOKEN }}";' > tina/deploy-token.ts
 
       - name: Build (TinaCMS + Astro)
-        run: npx tinacms build --skip-cloud-checks && astro build
+        run: npx tinacms build --skip-cloud-checks && npx astro build
         env:
           NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
