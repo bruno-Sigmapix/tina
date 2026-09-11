@@ -5,33 +5,45 @@ Proof of concept pour valider la stack **Astro + TinaCMS + TinaCloud**, deployee
 ## Structure du projet
 
 ```
-content/pages/       # Contenu Markdown (editable via Tina)
-tina/config.ts       # Configuration des collections Tina
-src/components/      # Composant React pour l'edition visuelle (useTina)
-src/layouts/         # Layout Astro commun
-src/pages/           # Pages Astro (index, about, contact)
-.github/workflows/   # CI/CD GitHub Actions
+content/pages/          # Contenu Markdown (editable via Tina)
+content/pricing/        # Contenu JSON des tarifs (editable via Tina)
+tina/config.ts          # Configuration des collections Tina
+tina/translations.ts    # Traductions FR de l'interface admin
+src/components/         # Composant React pour l'edition visuelle (useTina)
+src/layouts/            # Layout Astro commun (Tailwind CSS)
+src/pages/              # Pages Astro (index, about, contact, tarifs, contact-ok)
+.github/workflows/      # CI/CD GitHub Actions
 ```
 
-## Lancement en local
+## Lancement en local (Docker)
 
 ```bash
 # 1. Installer les dependances
-npm install
+docker compose run --rm node sh -c "npm install"
 
 # 2. Copier et remplir le fichier d'environnement
 cp .env.example .env
 
 # 3. Lancer le serveur de dev avec Tina actif
-npm run dev
-# Equivalent a : npx tinacms dev -c "astro dev"
+docker compose run --rm -p 4321:4321 -p 4001:4001 node sh -c \
+  "apk add --no-cache git && npx tinacms dev -c 'astro dev --host 0.0.0.0 --force'"
 ```
 
-Le site sera accessible sur `http://localhost:4321/tina/`.
-L'interface d'administration Tina sera sur `http://localhost:4321/tina/admin/`.
+- Site : `http://localhost:4321/tina/`
+- Admin Tina : `http://localhost:4321/tina/admin/`
 
 > En mode local (sans credentials TinaCloud), Tina utilise le filesystem
 > directement. Les modifications sont ecrites dans `content/`.
+
+## Regenerer les fichiers Tina
+
+Apres toute modification de `tina/config.ts`, il faut regenerer les fichiers :
+
+```bash
+docker compose run --rm node sh -c "apk add --no-cache git && npx tinacms build"
+```
+
+Cela met a jour `tina/__generated__/` et `tina/tina-lock.json`. Ces fichiers doivent etre commites.
 
 ## Configuration TinaCloud
 
@@ -39,7 +51,7 @@ L'interface d'administration Tina sera sur `http://localhost:4321/tina/admin/`.
 
 1. Aller sur [app.tina.io](https://app.tina.io/)
 2. Se connecter avec son compte GitHub
-3. Creer un nouveau projet et le lier au repo `bruno-Sigmapix/tina`
+3. Creer un nouveau projet et le lier au repo
 4. Recuperer le **Client ID** et generer un **Read-Only Token**
 
 ### 2. Variables d'environnement en local
@@ -65,7 +77,20 @@ Dans les **Settings** du repo GitHub > **Secrets and variables** > **Actions**, 
 1. Aller dans **Settings** > **Pages** du repo
 2. Dans **Source**, selectionner **GitHub Actions**
 3. Le workflow `deploy.yml` se declenchera automatiquement a chaque push sur `main`
-4. Le site sera accessible a `https://bruno-Sigmapix.github.io/tina/`
+
+## Formulaire de contact
+
+Le formulaire utilise [FormSubmit](https://formsubmit.co/) (service tiers gratuit). L'email de destination est protege par un hash dans le code source. Aucune configuration serveur necessaire.
+
+## Personnalisation de l'admin
+
+- **Traductions FR** : editables dans `tina/translations.ts`
+- **Section Cloud masquee** : configuree dans `cmsCallback` de `tina/config.ts`
+
+## Limites identifiees
+
+- **Visual editing (preview en temps reel)** : non fonctionnel sur GitHub Pages (necessite SSR). L'edition via formulaire dans l'admin Tina fonctionne en prod.
+- **Site public** : GitHub Pages ne permet pas de proteger l'acces par mot de passe (sauf GitHub Enterprise).
 
 ## Commandes
 
