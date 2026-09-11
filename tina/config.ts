@@ -140,12 +140,6 @@ export default defineConfig({
         label: "Pages",
         path: "content/pages",
         format: "mdx",
-        ui: {
-          router: ({ document }) => {
-            if (document._sys.filename === "home") return "/tina/";
-            return `/tina/${document._sys.filename}`;
-          },
-        },
         fields: [
           {
             type: "string",
@@ -180,9 +174,6 @@ export default defineConfig({
         label: "Tarifs",
         path: "content/pricing",
         format: "json",
-        ui: {
-          router: () => "/tina/tarifs",
-        },
         fields: [
           {
             type: "object",
