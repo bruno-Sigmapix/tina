@@ -48,17 +48,23 @@ export default defineConfig({
     observer.observe(document.body, { childList: true, subtree: true });
 
     // Deploy button in sidebar
-    if (deployToken) {
-      const injectDeployButton = () => {
-        if (document.getElementById("deploy-btn")) return;
-        // Find the separator line before "Event Log" / "Journal"
-        const separator = document.querySelector(
-          ".grow.my-4.border-b.border-gray-200",
-        );
-        if (!separator) return;
+    const injectDeployButton = () => {
+      if (document.getElementById("deploy-btn")) return;
+      // Find the separator line before "Event Log" / "Journal"
+      const separator = document.querySelector(
+        ".grow.my-4.border-b.border-gray-200",
+      );
+      if (!separator) return;
 
-        const btn = document.createElement("button");
-        btn.id = "deploy-btn";
+      const btn = document.createElement("button");
+      btn.id = "deploy-btn";
+
+      if (!deployToken) {
+        btn.className =
+          "text-lg py-2 whitespace-nowrap flex items-center text-white bg-gray-400 rounded-lg px-4 my-2 w-full justify-center font-medium cursor-not-allowed";
+        btn.textContent = "Publier (token manquant)";
+        btn.disabled = true;
+      } else {
         btn.className =
           "text-lg py-2 whitespace-nowrap flex items-center text-white bg-green-600 hover:bg-green-700 rounded-lg px-4 my-2 w-full justify-center font-medium transition-colors";
         btn.innerHTML =
@@ -99,17 +105,17 @@ export default defineConfig({
             console.error("Deploy error:", err);
           }
         });
+      }
 
-        separator.parentNode?.insertBefore(btn, separator);
-      };
+      separator.parentNode?.insertBefore(btn, separator);
+    };
 
-      const deployObserver = new MutationObserver(injectDeployButton);
-      injectDeployButton();
-      deployObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    }
+    const deployObserver = new MutationObserver(injectDeployButton);
+    injectDeployButton();
+    deployObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
 
     return cms;
   },
