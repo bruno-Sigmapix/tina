@@ -15,5 +15,7 @@ dist/
 
 # Tina (keep __generated__ committed — TinaCloud needs it for indexing)
 /tina/__generated__/.cache/
+/tina/__generated__/client.ts
+/tina/__generated__/config.prebuild.jsx
 
 .env

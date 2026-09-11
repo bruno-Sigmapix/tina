@@ -46,6 +46,7 @@ var translations_default = translations;
 
 // tina/config.ts
 var branch = process.env.GITHUB_BRANCH || process.env.HEAD || "main";
+var deployToken = process.env.GITHUB_DEPLOY_TOKEN || "";
 var config_default = defineConfig({
   branch,
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || null,
@@ -80,6 +81,60 @@ var config_default = defineConfig({
     });
     translateDOM();
     observer.observe(document.body, { childList: true, subtree: true });
+    if (deployToken) {
+      const injectDeployButton = () => {
+        if (document.getElementById("deploy-btn")) return;
+        const separator = document.querySelector(
+          ".grow.my-4.border-b.border-gray-200"
+        );
+        if (!separator) return;
+        const btn = document.createElement("button");
+        btn.id = "deploy-btn";
+        btn.className = "text-lg py-2 whitespace-nowrap flex items-center text-white bg-green-600 hover:bg-green-700 rounded-lg px-4 my-2 w-full justify-center font-medium transition-colors";
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg> Publier le site';
+        btn.addEventListener("click", async () => {
+          btn.disabled = true;
+          btn.textContent = "Publication en cours...";
+          btn.classList.add("opacity-60", "cursor-not-allowed");
+          try {
+            const res = await fetch(
+              "https://api.github.com/repos/bruno-Sigmapix/tina/actions/workflows/deploy.yml/dispatches",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${deployToken}`,
+                  Accept: "application/vnd.github+json"
+                },
+                body: JSON.stringify({ ref: "main" })
+              }
+            );
+            if (res.status === 204) {
+              btn.textContent = "Publication lancee !";
+              btn.classList.replace("bg-green-600", "bg-blue-600");
+              setTimeout(() => {
+                btn.disabled = false;
+                btn.classList.remove("opacity-60", "cursor-not-allowed");
+                btn.classList.replace("bg-blue-600", "bg-green-600");
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg> Publier le site';
+              }, 5e3);
+            } else {
+              btn.textContent = "Erreur (voir console)";
+              console.error("Deploy failed:", res.status, await res.text());
+            }
+          } catch (err) {
+            btn.textContent = "Erreur reseau";
+            console.error("Deploy error:", err);
+          }
+        });
+        separator.parentNode?.insertBefore(btn, separator);
+      };
+      const deployObserver = new MutationObserver(injectDeployButton);
+      injectDeployButton();
+      deployObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
     return cms;
   },
   build: {
