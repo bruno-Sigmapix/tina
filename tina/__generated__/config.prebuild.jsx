@@ -44,9 +44,11 @@ var translations = {
 };
 var translations_default = translations;
 
+// tina/deploy-token.ts
+var deployToken = "";
+
 // tina/config.ts
 var branch = process.env.GITHUB_BRANCH || process.env.HEAD || "main";
-var deployToken = process.env.GITHUB_DEPLOY_TOKEN || "";
 var config_default = defineConfig({
   branch,
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || null,
@@ -81,15 +83,19 @@ var config_default = defineConfig({
     });
     translateDOM();
     observer.observe(document.body, { childList: true, subtree: true });
-    if (deployToken) {
-      const injectDeployButton = () => {
-        if (document.getElementById("deploy-btn")) return;
-        const separator = document.querySelector(
-          ".grow.my-4.border-b.border-gray-200"
-        );
-        if (!separator) return;
-        const btn = document.createElement("button");
-        btn.id = "deploy-btn";
+    const injectDeployButton = () => {
+      if (document.getElementById("deploy-btn")) return;
+      const separator = document.querySelector(
+        ".grow.my-4.border-b.border-gray-200"
+      );
+      if (!separator) return;
+      const btn = document.createElement("button");
+      btn.id = "deploy-btn";
+      if (!deployToken) {
+        btn.className = "text-lg py-2 whitespace-nowrap flex items-center text-white bg-gray-400 rounded-lg px-4 my-2 w-full justify-center font-medium cursor-not-allowed";
+        btn.textContent = "Publier (token manquant)";
+        btn.disabled = true;
+      } else {
         btn.className = "text-lg py-2 whitespace-nowrap flex items-center text-white bg-green-600 hover:bg-green-700 rounded-lg px-4 my-2 w-full justify-center font-medium transition-colors";
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg> Publier le site';
         btn.addEventListener("click", async () => {
@@ -109,7 +115,7 @@ var config_default = defineConfig({
               }
             );
             if (res.status === 204) {
-              btn.textContent = "Publication lancee !";
+              btn.textContent = "Publication lanc\xE9e !";
               btn.classList.replace("bg-green-600", "bg-blue-600");
               setTimeout(() => {
                 btn.disabled = false;
@@ -122,19 +128,19 @@ var config_default = defineConfig({
               console.error("Deploy failed:", res.status, await res.text());
             }
           } catch (err) {
-            btn.textContent = "Erreur reseau";
+            btn.textContent = "Erreur r\xE9seau";
             console.error("Deploy error:", err);
           }
         });
-        separator.parentNode?.insertBefore(btn, separator);
-      };
-      const deployObserver = new MutationObserver(injectDeployButton);
-      injectDeployButton();
-      deployObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    }
+      }
+      separator.parentNode?.insertBefore(btn, separator);
+    };
+    const deployObserver = new MutationObserver(injectDeployButton);
+    injectDeployButton();
+    deployObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
     return cms;
   },
   build: {
@@ -155,12 +161,6 @@ var config_default = defineConfig({
         label: "Pages",
         path: "content/pages",
         format: "mdx",
-        ui: {
-          router: ({ document: document2 }) => {
-            if (document2._sys.filename === "home") return "/tina/";
-            return `/tina/${document2._sys.filename}`;
-          }
-        },
         fields: [
           {
             type: "string",
@@ -195,9 +195,6 @@ var config_default = defineConfig({
         label: "Tarifs",
         path: "content/pricing",
         format: "json",
-        ui: {
-          router: () => "/tina/tarifs"
-        },
         fields: [
           {
             type: "object",
