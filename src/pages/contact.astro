@@ -24,7 +24,7 @@ const base = import.meta.env.BASE_URL;
     >
       <!-- FormSubmit config -->
       <input type="hidden" name="_subject" value="Nouveau message depuis TinaPOC" />
-      <input type="hidden" name="_next" value={`${base}contact?sent=1`} />
+      <input type="hidden" name="_next" value={`${import.meta.env.SITE}${base}contact-ok`} />
       <input type="hidden" name="_captcha" value="true" />
       <input type="text" name="_honey" class="hidden" />
 
