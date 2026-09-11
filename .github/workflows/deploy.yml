@@ -29,12 +29,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject deploy token
+        run: echo 'export const deployToken = "${{ secrets.DEPLOY_TOKEN }}";' > tina/deploy-token.ts
+
       - name: Build (TinaCMS + Astro)
         run: npm run build
         env:
           NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
-          GITHUB_DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,8 +1,8 @@
 import { defineConfig } from "tinacms";
 import translations from "./translations";
+import { deployToken } from "./deploy-token";
 
 const branch = process.env.GITHUB_BRANCH || process.env.HEAD || "main";
-const deployToken = process.env.GITHUB_DEPLOY_TOKEN || "";
 
 export default defineConfig({
   branch,
