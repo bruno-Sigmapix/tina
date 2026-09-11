@@ -100,6 +100,12 @@ var config_default = defineConfig({
         label: "Pages",
         path: "content/pages",
         format: "mdx",
+        ui: {
+          router: ({ document: document2 }) => {
+            if (document2._sys.filename === "home") return "/";
+            return `/${document2._sys.filename}`;
+          }
+        },
         fields: [
           {
             type: "string",
@@ -134,6 +140,9 @@ var config_default = defineConfig({
         label: "Tarifs",
         path: "content/pricing",
         format: "json",
+        ui: {
+          router: () => "/tarifs"
+        },
         fields: [
           {
             type: "object",
