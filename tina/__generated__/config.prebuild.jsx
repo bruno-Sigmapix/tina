@@ -146,7 +146,7 @@ var config_default = defineConfig({
   build: {
     outputFolder: "admin",
     publicFolder: "public",
-    basePath: "tina"
+    basePath: ""
   },
   media: {
     tina: {

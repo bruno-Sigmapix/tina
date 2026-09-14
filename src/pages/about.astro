@@ -1,16 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PageContent from "../components/PageContent";
+import { TinaMarkdown } from "tinacms/dist/rich-text";
 import client from "../../tina/__generated__/client";
 
 const result = await client.queries.page({ relativePath: "about.mdx" });
+const page = result.data.page;
 ---
 
-<Layout title={result.data.page.title} metaDescription={result.data.page.metaDescription ?? undefined}>
-  <PageContent
-    client:only="react"
-    query={result.query}
-    variables={result.variables}
-    data={result.data}
-  />
+<Layout title={page.title} metaDescription={page.metaDescription ?? undefined}>
+  <article>
+    <h1>{page.title}</h1>
+    {page.image && <img src={page.image} alt={page.title} />}
+    <div>
+      <TinaMarkdown content={page.body} />
+    </div>
+  </article>
 </Layout>

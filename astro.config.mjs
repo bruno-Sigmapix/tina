@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://bruno-sigmapix.github.io',
+  site: 'https://tina-cms.sigmapix.fr',
   base: '/tina/',
   integrations: [react()],
 
