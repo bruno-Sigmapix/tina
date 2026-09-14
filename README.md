@@ -32,6 +32,11 @@ src/pages/                  # Pages Astro (index, about, contact, tarifs, contac
 2. Cliquer sur **Add Project** et lier le repo GitHub
 3. Récupérer le **Client ID** (visible dans les settings du projet)
 4. Générer un **Read-Only Token** dans l'onglet **Tokens**
+5. Dans **Configuration** > **Site URLs**, ajouter toutes les URLs du site :
+   - `http://localhost:4321` (dev local)
+   - `https://tina-cms.sigmapix.fr` (production)
+
+   > Seule l'origine est nécessaire (pas de chemin)
 
 ---
 
@@ -65,11 +70,13 @@ Dans le repo GitHub : **Settings** > **Secrets and variables** > **Actions** > *
 
 ---
 
-## 5. Activer GitHub Pages
+## 5. Activer GitHub Pages et le domaine personnalisé
 
 1. Dans le repo : **Settings** > **Pages**
 2. **Source** : sélectionner **GitHub Actions**
-3. Le premier déploiement se fera manuellement (voir section 8)
+3. **Custom domain** : entrer le domaine (ex: `tina-cms.sigmapix.fr`) et cliquer **Save**
+4. Cocher **Enforce HTTPS** (disponible après propagation DNS)
+5. Le premier déploiement se fera manuellement (voir section 8)
 
 ---
 
@@ -88,8 +95,8 @@ docker compose run --rm -p 4321:4321 -p 4001:4001 node sh -c \
   "apk add --no-cache git && npx tinacms dev -c 'astro dev --host 0.0.0.0 --force'"
 ```
 
-- Site : `http://localhost:4321/tina/`
-- Admin Tina : `http://localhost:4321/tina/admin/`
+- Site : `http://localhost:4321/`
+- Admin Tina : `http://localhost:4321/admin/`
 
 > En mode local (sans credentials TinaCloud), Tina utilise le filesystem directement.
 > Les modifications sont écrites dans `content/`.
@@ -136,7 +143,7 @@ Le déploiement se fait de 3 façons :
 Le formulaire utilise [FormSubmit](https://formsubmit.co/) (service tiers gratuit).
 
 - L'email de destination est protégé par un hash dans le code source
-- Après soumission, l'utilisateur est redirigé vers `/tina/contact-ok`
+- Après soumission, l'utilisateur est redirigé vers `/contact-ok`
 - Un honeypot (`_honey`) et un captcha sont actifs pour bloquer le spam
 - Aucune configuration serveur nécessaire
 
