@@ -9,9 +9,83 @@ export const PagePartsFragmentDoc = gql`
     fragment PageParts on Page {
   __typename
   title
-  image
   metaDescription
-  body
+  blocks {
+    __typename
+    ... on PageBlocksHero {
+      heading
+      subheading
+      image
+      ctaLabel
+      ctaUrl
+    }
+    ... on PageBlocksContent {
+      body
+    }
+    ... on PageBlocksImageText {
+      image
+      body
+      imagePosition
+    }
+    ... on PageBlocksCta {
+      heading
+      text
+      buttonLabel
+      buttonUrl
+    }
+  }
+}
+    `;
+export const NavPartsFragmentDoc = gql`
+    fragment NavParts on Nav {
+  __typename
+  items {
+    __typename
+    page {
+      ... on Page {
+        __typename
+        title
+        metaDescription
+        blocks {
+          __typename
+          ... on PageBlocksHero {
+            heading
+            subheading
+            image
+            ctaLabel
+            ctaUrl
+          }
+          ... on PageBlocksContent {
+            body
+          }
+          ... on PageBlocksImageText {
+            image
+            body
+            imagePosition
+          }
+          ... on PageBlocksCta {
+            heading
+            text
+            buttonLabel
+            buttonUrl
+          }
+        }
+      }
+      ... on Document {
+        _sys {
+          filename
+          basename
+          hasReferences
+          breadcrumbs
+          path
+          relativePath
+          extension
+        }
+        id
+      }
+    }
+    label
+  }
 }
     `;
 export const PricingPartsFragmentDoc = gql`
@@ -84,6 +158,63 @@ export const PageConnectionDocument = gql`
   }
 }
     ${PagePartsFragmentDoc}`;
+export const NavDocument = gql`
+    query nav($relativePath: String!) {
+  nav(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...NavParts
+  }
+}
+    ${NavPartsFragmentDoc}`;
+export const NavConnectionDocument = gql`
+    query navConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: NavFilter) {
+  navConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...NavParts
+      }
+    }
+  }
+}
+    ${NavPartsFragmentDoc}`;
 export const PricingDocument = gql`
     query pricing($relativePath: String!) {
   pricing(relativePath: $relativePath) {
@@ -149,6 +280,12 @@ export function getSdk(requester) {
     pageConnection(variables, options) {
       return requester(PageConnectionDocument, variables, options);
     },
+    nav(variables, options) {
+      return requester(NavDocument, variables, options);
+    },
+    navConnection(variables, options) {
+      return requester(NavConnectionDocument, variables, options);
+    },
     pricing(variables, options) {
       return requester(PricingDocument, variables, options);
     },
@@ -177,7 +314,7 @@ const generateRequester = (client) => {
 export const ExperimentalGetTinaClient = () => getSdk(
   generateRequester(
     createClient({
-      url: "https://content.tinajs.io/2.4/content/67dfb56b-6124-4b7c-9a0b-f0a87a35b04a/github/main",
+      url: "http://localhost:4001/graphql",
       queries
     })
   )

@@ -1,9 +1,82 @@
 fragment PageParts on Page {
   __typename
   title
-  image
   metaDescription
-  body
+  blocks {
+    __typename
+    ... on PageBlocksHero {
+      heading
+      subheading
+      image
+      ctaLabel
+      ctaUrl
+    }
+    ... on PageBlocksContent {
+      body
+    }
+    ... on PageBlocksImageText {
+      image
+      body
+      imagePosition
+    }
+    ... on PageBlocksCta {
+      heading
+      text
+      buttonLabel
+      buttonUrl
+    }
+  }
+}
+
+fragment NavParts on Nav {
+  __typename
+  items {
+    __typename
+    page {
+      ... on Page {
+        __typename
+        title
+        metaDescription
+        blocks {
+          __typename
+          ... on PageBlocksHero {
+            heading
+            subheading
+            image
+            ctaLabel
+            ctaUrl
+          }
+          ... on PageBlocksContent {
+            body
+          }
+          ... on PageBlocksImageText {
+            image
+            body
+            imagePosition
+          }
+          ... on PageBlocksCta {
+            heading
+            text
+            buttonLabel
+            buttonUrl
+          }
+        }
+      }
+      ... on Document {
+        _sys {
+          filename
+          basename
+          hasReferences
+          breadcrumbs
+          path
+          relativePath
+          extension
+        }
+        id
+      }
+    }
+    label
+  }
 }
 
 fragment PricingParts on Pricing {

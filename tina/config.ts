@@ -124,6 +124,10 @@ export default defineConfig({
     outputFolder: "admin",
     publicFolder: "public",
     basePath: "",
+    // Nécessaire pour accéder à l'admin depuis l'hôte quand `tinacms dev`
+    // tourne dans Docker : sans ça, le serveur Vite interne (port 4001)
+    // rejette les connexions qui ne viennent pas de la loopback locale.
+    host: "0.0.0.0",
   },
 
   media: {
@@ -140,6 +144,12 @@ export default defineConfig({
         label: "Pages",
         path: "content/pages",
         format: "mdx",
+        ui: {
+          router: ({ document }) => {
+            const slug = document._sys.breadcrumbs.join("/");
+            return slug.toLowerCase() === "home" ? "/" : `/${slug}`;
+          },
+        },
         fields: [
           {
             type: "string",
@@ -147,11 +157,6 @@ export default defineConfig({
             label: "Titre",
             isTitle: true,
             required: true,
-          },
-          {
-            type: "image",
-            name: "image",
-            label: "Image principale",
           },
           {
             type: "string",
@@ -162,10 +167,155 @@ export default defineConfig({
             },
           },
           {
-            type: "rich-text",
-            name: "body",
-            label: "Contenu",
-            isBody: true,
+            type: "object",
+            name: "blocks",
+            label: "Blocs de contenu",
+            list: true,
+            ui: {
+              visualSelector: true,
+              itemProps: (item: Record<string, string>) => ({
+                label: item?.heading || item?.label,
+              }),
+            },
+            templates: [
+              {
+                name: "hero",
+                label: "Hero",
+                fields: [
+                  {
+                    type: "string",
+                    name: "heading",
+                    label: "Titre",
+                    required: true,
+                  },
+                  {
+                    type: "string",
+                    name: "subheading",
+                    label: "Sous-titre",
+                    ui: { component: "textarea" },
+                  },
+                  {
+                    type: "image",
+                    name: "image",
+                    label: "Image",
+                  },
+                  {
+                    type: "string",
+                    name: "ctaLabel",
+                    label: "Texte du bouton",
+                  },
+                  {
+                    type: "string",
+                    name: "ctaUrl",
+                    label: "Lien du bouton",
+                  },
+                ],
+              },
+              {
+                name: "content",
+                label: "Texte",
+                fields: [
+                  {
+                    type: "rich-text",
+                    name: "body",
+                    label: "Contenu",
+                  },
+                ],
+              },
+              {
+                name: "imageText",
+                label: "Image + Texte",
+                fields: [
+                  {
+                    type: "image",
+                    name: "image",
+                    label: "Image",
+                  },
+                  {
+                    type: "rich-text",
+                    name: "body",
+                    label: "Texte",
+                  },
+                  {
+                    type: "string",
+                    name: "imagePosition",
+                    label: "Position de l'image",
+                    options: [
+                      { value: "left", label: "Gauche" },
+                      { value: "right", label: "Droite" },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "cta",
+                label: "Appel à l'action",
+                fields: [
+                  {
+                    type: "string",
+                    name: "heading",
+                    label: "Titre",
+                    required: true,
+                  },
+                  {
+                    type: "string",
+                    name: "text",
+                    label: "Texte",
+                    ui: { component: "textarea" },
+                  },
+                  {
+                    type: "string",
+                    name: "buttonLabel",
+                    label: "Texte du bouton",
+                  },
+                  {
+                    type: "string",
+                    name: "buttonUrl",
+                    label: "Lien du bouton",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: "nav",
+        label: "Navigation",
+        path: "content/nav",
+        format: "json",
+        ui: {
+          global: true,
+          allowedActions: {
+            create: false,
+            delete: false,
+          },
+        },
+        fields: [
+          {
+            type: "object",
+            name: "items",
+            label: "Liens du menu",
+            list: true,
+            ui: {
+              itemProps: (item: Record<string, string>) => ({
+                label: item?.label || item?.page,
+              }),
+            },
+            fields: [
+              {
+                type: "reference",
+                name: "page",
+                label: "Page",
+                collections: ["page"],
+                required: true,
+              },
+              {
+                type: "string",
+                name: "label",
+                label: "Libellé personnalisé (optionnel)",
+              },
+            ],
           },
         ],
       },

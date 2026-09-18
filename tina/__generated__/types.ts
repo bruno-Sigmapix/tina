@@ -83,6 +83,8 @@ export type Query = {
   document: DocumentNode;
   page: Page;
   pageConnection: PageConnection;
+  nav: Nav;
+  navConnection: NavConnection;
   pricing: Pricing;
   pricingConnection: PricingConnection;
 };
@@ -124,6 +126,21 @@ export type QueryPageConnectionArgs = {
 };
 
 
+export type QueryNavArgs = {
+  relativePath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryNavConnectionArgs = {
+  before?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Float']['input']>;
+  last?: InputMaybe<Scalars['Float']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<NavFilter>;
+};
+
+
 export type QueryPricingArgs = {
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
@@ -140,6 +157,7 @@ export type QueryPricingConnectionArgs = {
 
 export type DocumentFilter = {
   page?: InputMaybe<PageFilter>;
+  nav?: InputMaybe<NavFilter>;
   pricing?: InputMaybe<PricingFilter>;
 };
 
@@ -180,14 +198,44 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Page | Pricing | Folder;
+export type DocumentNode = Page | Nav | Pricing | Folder;
+
+export type PageBlocksHero = {
+  __typename?: 'PageBlocksHero';
+  heading: Scalars['String']['output'];
+  subheading?: Maybe<Scalars['String']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  ctaLabel?: Maybe<Scalars['String']['output']>;
+  ctaUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type PageBlocksContent = {
+  __typename?: 'PageBlocksContent';
+  body?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type PageBlocksImageText = {
+  __typename?: 'PageBlocksImageText';
+  image?: Maybe<Scalars['String']['output']>;
+  body?: Maybe<Scalars['JSON']['output']>;
+  imagePosition?: Maybe<Scalars['String']['output']>;
+};
+
+export type PageBlocksCta = {
+  __typename?: 'PageBlocksCta';
+  heading: Scalars['String']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  buttonLabel?: Maybe<Scalars['String']['output']>;
+  buttonUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type PageBlocks = PageBlocksHero | PageBlocksContent | PageBlocksImageText | PageBlocksCta;
 
 export type Page = Node & Document & {
   __typename?: 'Page';
   title: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
   metaDescription?: Maybe<Scalars['String']['output']>;
-  body?: Maybe<Scalars['JSON']['output']>;
+  blocks?: Maybe<Array<Maybe<PageBlocks>>>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -207,17 +255,48 @@ export type ImageFilter = {
   in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type PageBlocksHeroFilter = {
+  heading?: InputMaybe<StringFilter>;
+  subheading?: InputMaybe<StringFilter>;
+  image?: InputMaybe<ImageFilter>;
+  ctaLabel?: InputMaybe<StringFilter>;
+  ctaUrl?: InputMaybe<StringFilter>;
+};
+
 export type RichTextFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
   eq?: InputMaybe<Scalars['String']['input']>;
   exists?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type PageBlocksContentFilter = {
+  body?: InputMaybe<RichTextFilter>;
+};
+
+export type PageBlocksImageTextFilter = {
+  image?: InputMaybe<ImageFilter>;
+  body?: InputMaybe<RichTextFilter>;
+  imagePosition?: InputMaybe<StringFilter>;
+};
+
+export type PageBlocksCtaFilter = {
+  heading?: InputMaybe<StringFilter>;
+  text?: InputMaybe<StringFilter>;
+  buttonLabel?: InputMaybe<StringFilter>;
+  buttonUrl?: InputMaybe<StringFilter>;
+};
+
+export type PageBlocksFilter = {
+  hero?: InputMaybe<PageBlocksHeroFilter>;
+  content?: InputMaybe<PageBlocksContentFilter>;
+  imageText?: InputMaybe<PageBlocksImageTextFilter>;
+  cta?: InputMaybe<PageBlocksCtaFilter>;
+};
+
 export type PageFilter = {
   title?: InputMaybe<StringFilter>;
-  image?: InputMaybe<ImageFilter>;
   metaDescription?: InputMaybe<StringFilter>;
-  body?: InputMaybe<RichTextFilter>;
+  blocks?: InputMaybe<PageBlocksFilter>;
 };
 
 export type PageConnectionEdges = {
@@ -231,6 +310,48 @@ export type PageConnection = Connection & {
   pageInfo: PageInfo;
   totalCount: Scalars['Float']['output'];
   edges?: Maybe<Array<Maybe<PageConnectionEdges>>>;
+};
+
+export type NavItemsPage = Page;
+
+export type NavItems = {
+  __typename?: 'NavItems';
+  page: NavItemsPage;
+  label?: Maybe<Scalars['String']['output']>;
+};
+
+export type Nav = Node & Document & {
+  __typename?: 'Nav';
+  items?: Maybe<Array<Maybe<NavItems>>>;
+  id: Scalars['ID']['output'];
+  _sys: SystemInfo;
+  _values: Scalars['JSON']['output'];
+};
+
+export type NavItemsPageFilter = {
+  page?: InputMaybe<PageFilter>;
+};
+
+export type NavItemsFilter = {
+  page?: InputMaybe<NavItemsPageFilter>;
+  label?: InputMaybe<StringFilter>;
+};
+
+export type NavFilter = {
+  items?: InputMaybe<NavItemsFilter>;
+};
+
+export type NavConnectionEdges = {
+  __typename?: 'NavConnectionEdges';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<Nav>;
+};
+
+export type NavConnection = Connection & {
+  __typename?: 'NavConnection';
+  pageInfo: PageInfo;
+  totalCount: Scalars['Float']['output'];
+  edges?: Maybe<Array<Maybe<NavConnectionEdges>>>;
 };
 
 export type PricingTiers = {
@@ -294,6 +415,8 @@ export type Mutation = {
   createFolder: DocumentNode;
   updatePage: Page;
   createPage: Page;
+  updateNav: Nav;
+  createNav: Nav;
   updatePricing: Pricing;
   createPricing: Pricing;
 };
@@ -344,6 +467,18 @@ export type MutationCreatePageArgs = {
 };
 
 
+export type MutationUpdateNavArgs = {
+  relativePath: Scalars['String']['input'];
+  params: NavMutation;
+};
+
+
+export type MutationCreateNavArgs = {
+  relativePath: Scalars['String']['input'];
+  params: NavMutation;
+};
+
+
 export type MutationUpdatePricingArgs = {
   relativePath: Scalars['String']['input'];
   params: PricingMutation;
@@ -357,20 +492,62 @@ export type MutationCreatePricingArgs = {
 
 export type DocumentUpdateMutation = {
   page?: InputMaybe<PageMutation>;
+  nav?: InputMaybe<NavMutation>;
   pricing?: InputMaybe<PricingMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DocumentMutation = {
   page?: InputMaybe<PageMutation>;
+  nav?: InputMaybe<NavMutation>;
   pricing?: InputMaybe<PricingMutation>;
+};
+
+export type PageBlocksHeroMutation = {
+  heading?: InputMaybe<Scalars['String']['input']>;
+  subheading?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  ctaLabel?: InputMaybe<Scalars['String']['input']>;
+  ctaUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PageBlocksContentMutation = {
+  body?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type PageBlocksImageTextMutation = {
+  image?: InputMaybe<Scalars['String']['input']>;
+  body?: InputMaybe<Scalars['JSON']['input']>;
+  imagePosition?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PageBlocksCtaMutation = {
+  heading?: InputMaybe<Scalars['String']['input']>;
+  text?: InputMaybe<Scalars['String']['input']>;
+  buttonLabel?: InputMaybe<Scalars['String']['input']>;
+  buttonUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PageBlocksMutation = {
+  hero?: InputMaybe<PageBlocksHeroMutation>;
+  content?: InputMaybe<PageBlocksContentMutation>;
+  imageText?: InputMaybe<PageBlocksImageTextMutation>;
+  cta?: InputMaybe<PageBlocksCtaMutation>;
 };
 
 export type PageMutation = {
   title?: InputMaybe<Scalars['String']['input']>;
-  image?: InputMaybe<Scalars['String']['input']>;
   metaDescription?: InputMaybe<Scalars['String']['input']>;
-  body?: InputMaybe<Scalars['JSON']['input']>;
+  blocks?: InputMaybe<Array<InputMaybe<PageBlocksMutation>>>;
+};
+
+export type NavItemsMutation = {
+  page?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type NavMutation = {
+  items?: InputMaybe<Array<InputMaybe<NavItemsMutation>>>;
 };
 
 export type PricingTiersMutation = {
@@ -399,17 +576,61 @@ export type ImageFilter = {
   in?: Array<string | null | undefined> | null | undefined;
 };
 
+export type PageBlocksHeroFilter = {
+  heading?: StringFilter | null | undefined;
+  subheading?: StringFilter | null | undefined;
+  image?: ImageFilter | null | undefined;
+  ctaLabel?: StringFilter | null | undefined;
+  ctaUrl?: StringFilter | null | undefined;
+};
+
 export type RichTextFilter = {
   startsWith?: string | null | undefined;
   eq?: string | null | undefined;
   exists?: boolean | null | undefined;
 };
 
+export type PageBlocksContentFilter = {
+  body?: RichTextFilter | null | undefined;
+};
+
+export type PageBlocksImageTextFilter = {
+  image?: ImageFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+  imagePosition?: StringFilter | null | undefined;
+};
+
+export type PageBlocksCtaFilter = {
+  heading?: StringFilter | null | undefined;
+  text?: StringFilter | null | undefined;
+  buttonLabel?: StringFilter | null | undefined;
+  buttonUrl?: StringFilter | null | undefined;
+};
+
+export type PageBlocksFilter = {
+  hero?: PageBlocksHeroFilter | null | undefined;
+  content?: PageBlocksContentFilter | null | undefined;
+  imageText?: PageBlocksImageTextFilter | null | undefined;
+  cta?: PageBlocksCtaFilter | null | undefined;
+};
+
 export type PageFilter = {
   title?: StringFilter | null | undefined;
-  image?: ImageFilter | null | undefined;
   metaDescription?: StringFilter | null | undefined;
-  body?: RichTextFilter | null | undefined;
+  blocks?: PageBlocksFilter | null | undefined;
+};
+
+export type NavItemsPageFilter = {
+  page?: PageFilter | null | undefined;
+};
+
+export type NavItemsFilter = {
+  page?: NavItemsPageFilter | null | undefined;
+  label?: StringFilter | null | undefined;
+};
+
+export type NavFilter = {
+  items?: NavItemsFilter | null | undefined;
 };
 
 export type NumberFilter = {
@@ -434,7 +655,19 @@ export type PricingFilter = {
   footnote?: StringFilter | null | undefined;
 };
 
-export type PagePartsFragment = { __typename: 'Page', title: string, image: string | null, metaDescription: string | null, body: any };
+export type PagePartsFragment = { __typename: 'Page', title: string, metaDescription: string | null, blocks: Array<
+    | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+    | { __typename: 'PageBlocksContent', body: any }
+    | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+    | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+   | null> | null };
+
+export type NavPartsFragment = { __typename: 'Nav', items: Array<{ __typename: 'NavItems', label: string | null, page: { __typename: 'Page', title: string, metaDescription: string | null, id: string, blocks: Array<
+        | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+        | { __typename: 'PageBlocksContent', body: any }
+        | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+        | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+       | null> | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } } | null> | null };
 
 export type PricingPartsFragment = { __typename: 'Pricing', footnote: string | null, tiers: Array<{ __typename: 'PricingTiers', number: number | null, title: string, highlight: string | null, details: any } | null> | null };
 
@@ -443,7 +676,12 @@ export type PageQueryVariables = Exact<{
 }>;
 
 
-export type PageQuery = { page: { __typename: 'Page', id: string, title: string, image: string | null, metaDescription: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type PageQuery = { page: { __typename: 'Page', id: string, title: string, metaDescription: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, blocks: Array<
+      | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+      | { __typename: 'PageBlocksContent', body: any }
+      | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+      | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+     | null> | null } };
 
 export type PageConnectionQueryVariables = Exact<{
   before?: string | null | undefined;
@@ -455,7 +693,41 @@ export type PageConnectionQueryVariables = Exact<{
 }>;
 
 
-export type PageConnectionQuery = { pageConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Page', id: string, title: string, image: string | null, metaDescription: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type PageConnectionQuery = { pageConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Page', id: string, title: string, metaDescription: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, blocks: Array<
+          | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+          | { __typename: 'PageBlocksContent', body: any }
+          | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+          | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+         | null> | null } | null } | null> | null } };
+
+export type NavQueryVariables = Exact<{
+  relativePath: string;
+}>;
+
+
+export type NavQuery = { nav: { __typename: 'Nav', id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, items: Array<{ __typename: 'NavItems', label: string | null, page: { __typename: 'Page', title: string, metaDescription: string | null, id: string, blocks: Array<
+          | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+          | { __typename: 'PageBlocksContent', body: any }
+          | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+          | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+         | null> | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } } | null> | null } };
+
+export type NavConnectionQueryVariables = Exact<{
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: NavFilter | null | undefined;
+}>;
+
+
+export type NavConnectionQuery = { navConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Nav', id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, items: Array<{ __typename: 'NavItems', label: string | null, page: { __typename: 'Page', title: string, metaDescription: string | null, id: string, blocks: Array<
+              | { __typename: 'PageBlocksHero', heading: string, subheading: string | null, image: string | null, ctaLabel: string | null, ctaUrl: string | null }
+              | { __typename: 'PageBlocksContent', body: any }
+              | { __typename: 'PageBlocksImageText', image: string | null, body: any, imagePosition: string | null }
+              | { __typename: 'PageBlocksCta', heading: string, text: string | null, buttonLabel: string | null, buttonUrl: string | null }
+             | null> | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } } | null> | null } | null } | null> | null } };
 
 export type PricingQueryVariables = Exact<{
   relativePath: string;
@@ -480,9 +752,83 @@ export const PagePartsFragmentDoc = gql`
     fragment PageParts on Page {
   __typename
   title
-  image
   metaDescription
-  body
+  blocks {
+    __typename
+    ... on PageBlocksHero {
+      heading
+      subheading
+      image
+      ctaLabel
+      ctaUrl
+    }
+    ... on PageBlocksContent {
+      body
+    }
+    ... on PageBlocksImageText {
+      image
+      body
+      imagePosition
+    }
+    ... on PageBlocksCta {
+      heading
+      text
+      buttonLabel
+      buttonUrl
+    }
+  }
+}
+    `;
+export const NavPartsFragmentDoc = gql`
+    fragment NavParts on Nav {
+  __typename
+  items {
+    __typename
+    page {
+      ... on Page {
+        __typename
+        title
+        metaDescription
+        blocks {
+          __typename
+          ... on PageBlocksHero {
+            heading
+            subheading
+            image
+            ctaLabel
+            ctaUrl
+          }
+          ... on PageBlocksContent {
+            body
+          }
+          ... on PageBlocksImageText {
+            image
+            body
+            imagePosition
+          }
+          ... on PageBlocksCta {
+            heading
+            text
+            buttonLabel
+            buttonUrl
+          }
+        }
+      }
+      ... on Document {
+        _sys {
+          filename
+          basename
+          hasReferences
+          breadcrumbs
+          path
+          relativePath
+          extension
+        }
+        id
+      }
+    }
+    label
+  }
 }
     `;
 export const PricingPartsFragmentDoc = gql`
@@ -555,6 +901,63 @@ export const PageConnectionDocument = gql`
   }
 }
     ${PagePartsFragmentDoc}`;
+export const NavDocument = gql`
+    query nav($relativePath: String!) {
+  nav(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...NavParts
+  }
+}
+    ${NavPartsFragmentDoc}`;
+export const NavConnectionDocument = gql`
+    query navConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: NavFilter) {
+  navConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...NavParts
+      }
+    }
+  }
+}
+    ${NavPartsFragmentDoc}`;
 export const PricingDocument = gql`
     query pricing($relativePath: String!) {
   pricing(relativePath: $relativePath) {
@@ -621,6 +1024,12 @@ export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) 
     pageConnection(variables?: PageConnectionQueryVariables, options?: C): Promise<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}> {
         return requester<{data: PageConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PageConnectionQueryVariables, query: string}, PageConnectionQueryVariables>(PageConnectionDocument, variables, options);
       },
+    nav(variables: NavQueryVariables, options?: C): Promise<{data: NavQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: NavQueryVariables, query: string}> {
+        return requester<{data: NavQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: NavQueryVariables, query: string}, NavQueryVariables>(NavDocument, variables, options);
+      },
+    navConnection(variables?: NavConnectionQueryVariables, options?: C): Promise<{data: NavConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: NavConnectionQueryVariables, query: string}> {
+        return requester<{data: NavConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: NavConnectionQueryVariables, query: string}, NavConnectionQueryVariables>(NavConnectionDocument, variables, options);
+      },
     pricing(variables: PricingQueryVariables, options?: C): Promise<{data: PricingQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingQueryVariables, query: string}> {
         return requester<{data: PricingQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PricingQueryVariables, query: string}, PricingQueryVariables>(PricingDocument, variables, options);
       },
@@ -674,7 +1083,7 @@ export const ExperimentalGetTinaClient = () =>
   getSdk(
     generateRequester(
       createClient({
-        url: "https://content.tinajs.io/2.4/content/67dfb56b-6124-4b7c-9a0b-f0a87a35b04a/github/main",
+        url: "http://localhost:4001/graphql",
         queries,
       })
     )
