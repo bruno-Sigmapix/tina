@@ -168,7 +168,7 @@ var config_default = defineConfig({
         ui: {
           router: ({ document: document2 }) => {
             const slug = document2._sys.breadcrumbs.join("/");
-            return slug.toLowerCase() === "home" ? "/" : `/${slug}`;
+            return slug.toLowerCase() === "home" ? "/" : `/${slug}/`;
           }
         },
         fields: [

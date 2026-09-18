@@ -147,7 +147,12 @@ export default defineConfig({
         ui: {
           router: ({ document }) => {
             const slug = document._sys.breadcrumbs.join("/");
-            return slug.toLowerCase() === "home" ? "/" : `/${slug}`;
+            // Slash final obligatoire : GitHub Pages redirige "/about" vers
+            // "/about/" avec un Location: en http:// même sur une requête
+            // HTTPS, ce que l'iframe de preview (chargée en HTTPS) refuse de
+            // suivre (Mixed Content). En demandant directement l'URL finale,
+            // on évite complètement cette redirection cassée.
+            return slug.toLowerCase() === "home" ? "/" : `/${slug}/`;
           },
         },
         fields: [
