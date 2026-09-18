@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import client from "../../tina/__generated__/client";
+import { getPageUrl } from "../lib/pageUrl";
 
 interface Props {
   title: string;
@@ -9,12 +11,23 @@ interface Props {
 const { title, metaDescription } = Astro.props;
 const base = import.meta.env.BASE_URL;
 
-const navLinks = [
-  { label: "Accueil", href: `${base}` },
-  { label: "A propos", href: `${base}about` },
-  { label: "Tarifs", href: `${base}tarifs` },
-  { label: "Contact", href: `${base}contact` },
-];
+// La nav est pilotée depuis le back-office Tina (collection singleton "nav").
+// Un item de content/nav/index.json = un lien dans le menu, dans l'ordre du
+// tableau "items". Retirer une page de cette liste la fait disparaître du
+// menu sans la supprimer : la visibilité dans le menu n'a pas d'autre
+// mécanisme que la présence dans "items".
+const navResult = await client.queries.nav({ relativePath: "index.json" });
+const navItems = navResult.data.nav.items ?? [];
+
+const navLinks = navItems
+  .filter((item) => item?.page)
+  .map((item) => {
+    const page = item!.page!;
+    return {
+      label: item!.label || page.title,
+      href: getPageUrl(page._sys.relativePath),
+    };
+  });
 ---
 
 <!doctype html>

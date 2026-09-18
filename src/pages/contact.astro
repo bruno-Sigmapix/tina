@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { TinaMarkdown } from "tinacms/dist/rich-text";
+import PageContent from "../components/PageContent";
 import client from "../../tina/__generated__/client";
 
 const result = await client.queries.page({ relativePath: "contact.mdx" });
@@ -9,13 +9,7 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title={page.title} metaDescription={page.metaDescription ?? undefined}>
-  <article>
-    <h1>{page.title}</h1>
-    {page.image && <img src={page.image} alt={page.title} />}
-    <div>
-      <TinaMarkdown content={page.body} />
-    </div>
-  </article>
+  <PageContent client:load query={result.query} variables={result.variables} data={result.data} />
 
   <section class="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
     <h2 class="mb-6 text-2xl font-bold text-slate-900">Envoyer un message</h2>

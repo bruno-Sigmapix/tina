@@ -1,6 +1,6 @@
-import { useTina, tinaField } from "tinacms/dist/react";
-import { TinaMarkdown } from "tinacms/dist/rich-text";
+import { useTina } from "tinacms/dist/react";
 import type { PageQuery } from "../../tina/__generated__/types";
+import { PageBlocks } from "./blocks";
 
 interface PageContentProps {
   query: string;
@@ -17,22 +17,14 @@ export default function PageContent(props: PageContentProps) {
   });
 
   const page = data.page;
+  const hasHero = (page.blocks ?? []).some(
+    (block) => block?.__typename === "PageBlocksHero",
+  );
 
   return (
     <article>
-      <h1 data-tina-field={tinaField(page, "title")}>{page.title}</h1>
-
-      {page.image && (
-        <img
-          data-tina-field={tinaField(page, "image")}
-          src={page.image}
-          alt={page.title}
-        />
-      )}
-
-      <div data-tina-field={tinaField(page, "body")}>
-        <TinaMarkdown content={page.body} />
-      </div>
+      {!hasHero && <h1 className="sr-only">{page.title}</h1>}
+      <PageBlocks blocks={page.blocks} />
     </article>
   );
 }

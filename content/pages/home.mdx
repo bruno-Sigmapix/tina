@@ -1,17 +1,28 @@
 ---
 title: Accueil
-image: /uploads/placeholder.svg
 metaDescription: Page d'accueil du POC Astro + TinaCMS
+blocks:
+  - image: /uploads/placeholder.svg
+    body: |
+      Légende
+    _template: imageText
+  - body: |
+      ## Bienvenue sur le POC Astro + TinaCMS
+
+      Ceci est la page d'accueil. Vous pouvez **modifier ce contenu** directement via l'interface visuelle de TinaCMS.
+
+      ### Fonctionnalités testées
+
+      * Edition visuelle en temps réel
+      * Gestion des images
+      * Champs SEO (méta description)
+      * Déploiement automatique via GitHub Pages
+      * Bouton pour déployer depuis le back office
+    _template: content
+  - heading: Prêt à essayer TinaCMS ?
+    text: Modifiez cette page directement depuis le back office.
+    buttonLabel: Accéder à l'admin
+    buttonUrl: /admin/index.html
+    _template: cta
 ---
 
-## Bienvenue sur le POC Astro + TinaCMS
-
-Ceci est la page d'accueil. Vous pouvez **modifier ce contenu** directement via l'interface visuelle de TinaCMS.
-
-### Fonctionnalités testées
-
-* Edition visuelle en temps réel
-* Gestion des images
-* Champs SEO (méta description)
-* Déploiement automatique via GitHub Pages
-* Bouton pour déployer depuis le back office

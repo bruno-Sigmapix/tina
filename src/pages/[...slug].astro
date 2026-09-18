@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageContent from "../components/PageContent";
+import client from "../../tina/__generated__/client";
+
+export async function getStaticPaths() {
+  const result = await client.queries.pageConnection();
+  const edges = result.data.pageConnection.edges ?? [];
+
+  // Slugs déjà servis par une page Astro dédiée (index.astro, about.astro,
+  // contact.astro) : à exclure ici pour éviter un conflit de route.
+  const reservedSlugs = ["home", "about", "contact"];
+
+  return edges
+    .filter((edge) => {
+      const relativePath = edge?.node?._sys.relativePath;
+      if (!relativePath) return false;
+      const slug = relativePath.replace(/\.mdx?$/i, "");
+      return !reservedSlugs.includes(slug.toLowerCase());
+    })
+    .map((edge) => {
+      const relativePath = edge!.node!._sys.relativePath;
+      const slug = relativePath.replace(/\.mdx?$/i, "");
+      return {
+        params: { slug },
+        props: { relativePath },
+      };
+    });
+}
+
+interface Props {
+  relativePath: string;
+}
+
+const { relativePath } = Astro.props as Props;
+const result = await client.queries.page({ relativePath });
+const page = result.data.page;
+---
+
+<Layout title={page.title} metaDescription={page.metaDescription ?? undefined}>
+  <PageContent client:load query={result.query} variables={result.variables} data={result.data} />
+</Layout>
