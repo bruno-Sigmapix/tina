@@ -2,6 +2,10 @@
   "items": [
     {
       "page": "content/pages/home.mdx"
+    },
+    {
+      "page": "content/pages/about.mdx",
+      "label": "A propos"
     }
   ]
 }
