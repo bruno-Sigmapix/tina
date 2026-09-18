@@ -6,6 +6,10 @@
     {
       "page": "content/pages/about.mdx",
       "label": "A propos"
+    },
+    {
+      "page": "content/pages/contact.mdx",
+      "label": "Contact"
     }
   ]
 }
